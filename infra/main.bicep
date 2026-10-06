@@ -20,7 +20,7 @@ param env string = 'prod'
   'westeurope'
   'eastasia'
 ])
-param swaLocation string = 'westeurope'
+param swaLocation string = 'eastus2'
 
 @allowed([
   'Free'
