@@ -31,6 +31,18 @@ param sku string = 'Free'
 @description('Optional custom domain, e.g. www.example.com. Leave empty to skip. The CNAME must already point at the default hostname.')
 param customDomain string = ''
 
+@description('Name of the Azure Communication Services resource used by the contact form.')
+param communicationServiceName string
+
+@description('Name of the ACS Email service.')
+param emailServiceName string
+
+@description('Where ACS stores data at rest.')
+param communicationDataLocation string = 'UK'
+
+@description('Inbox that contact form messages are delivered to.')
+param contactRecipient string
+
 param tags object = {
   app: appName
   environment: env
@@ -39,6 +51,17 @@ param tags object = {
 
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
   name: resourceGroupName
+}
+
+module comms 'modules/communication.bicep' = {
+  scope: rg
+  name: 'communication'
+  params: {
+    emailServiceName: emailServiceName
+    communicationServiceName: communicationServiceName
+    dataLocation: communicationDataLocation
+    tags: tags
+  }
 }
 
 module swa 'modules/staticWebApp.bicep' = {
@@ -50,6 +73,9 @@ module swa 'modules/staticWebApp.bicep' = {
     sku: sku
     customDomain: customDomain
     tags: tags
+    communicationServiceName: comms.outputs.communicationServiceName
+    contactSender: comms.outputs.senderAddress
+    contactRecipient: contactRecipient
   }
 }
 

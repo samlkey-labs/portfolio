@@ -5,7 +5,8 @@ Bicep templates for hosting the portfolio on Azure Static Web Apps.
 | File | Purpose |
 |---|---|
 | `main.bicep` | Subscription-scoped entry point. Deploys the Static Web App into an existing resource group. |
-| `modules/staticWebApp.bicep` | The Static Web App and optional custom domain. |
+| `modules/staticWebApp.bicep` | The Static Web App, optional custom domain, and API app settings. |
+| `modules/communication.bicep` | Azure Communication Services Email, used by the contact form API in `/api`. |
 | `main.bicepparam` | Parameter values, including the resource group name. |
 
 The resource group (`slk-portfolio-rg-eus2`) already exists and isn't managed by these templates. The Static Web App is deployed to **East US 2** (West Europe isn't accepting new Static Web Apps for this subscription); its content is served from Azure's global edge network.
@@ -19,6 +20,10 @@ Run these once with the Azure CLI, signed in as someone who can assign roles on 
 ```bash
 # Git Bash rewrites args starting with "/" into Windows paths, which breaks --scope
 export MSYS_NO_PATHCONV=1
+
+# Resource providers the deploy identity can't register itself
+az provider register --namespace Microsoft.Web
+az provider register --namespace Microsoft.Communication
 
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 TENANT_ID=$(az account show --query tenantId -o tsv)
@@ -38,7 +43,8 @@ az role definition create --role-definition '{
   "Description": "Create and read subscription-scoped ARM deployments.",
   "Actions": [
     "Microsoft.Resources/deployments/*",
-    "Microsoft.Resources/subscriptions/resourceGroups/read"
+    "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "Microsoft.Web/locations/*/read"
   ],
   "AssignableScopes": ["/subscriptions/'"$SUBSCRIPTION_ID"'"]
 }'

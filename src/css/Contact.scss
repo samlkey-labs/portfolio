@@ -354,6 +354,33 @@
 }
 
 // ============================================
+// Honeypot + submit status
+// ============================================
+.form-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.form-status {
+    margin: 0;
+    font-size: 0.85rem;
+    font-family: 'ClashDisplay-Regular', 'ClashDisplay-Variable', sans-serif;
+    text-align: center;
+    color: var(--textfade-colour);
+
+    &--success {
+        color: var(--textaccent-colour);
+    }
+
+    &--error {
+        color: #d9534f;
+    }
+}
+
+// ============================================
 // Reduced motion
 // ============================================
 @media (prefers-reduced-motion: reduce) {
