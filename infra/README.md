@@ -8,9 +8,9 @@ Bicep templates for hosting the portfolio on Azure Static Web Apps.
 | `modules/staticWebApp.bicep` | The Static Web App and optional custom domain. |
 | `main.bicepparam` | Parameter values, including the resource group name. |
 
-The resource group (`slk-portfolio-rg-weu`) already exists and isn't managed by these templates. The Static Web App is deployed to **West Europe**; its content is served from Azure's global edge network.
+The resource group (`slk-portfolio-rg-weu`) already exists and isn't managed by these templates. The Static Web App is deployed to **East US 2** (West Europe isn't accepting new Static Web Apps for this subscription); its content is served from Azure's global edge network.
 
-Deployment runs from `.github/workflows/slk-portfolio-swa-weu.yml`: `what-if` on pull requests, `create` on push to `master`.
+Deployment runs from `.github/workflows/slk-portfolio-swa-eus2.yml`: `what-if` on pull requests, `create` on push to `master`.
 
 ## One-time setup: GitHub → Azure OIDC
 
@@ -47,11 +47,14 @@ az role assignment create \
   --role "Subscription Deployment Writer" \
   --scope "/subscriptions/$SUBSCRIPTION_ID"
 
+# GitHub's OIDC subject for this repo includes the owner and repo IDs (owner@id/repo@id).
+# The exact value is printed as "subject claim" in the azure/login step of a workflow run.
+
 # Trust pushes to master
 az ad app federated-credential create --id "$APP_ID" --parameters '{
   "name": "master",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:samlkey-labs/portfolio:ref:refs/heads/master",
+  "subject": "repo:samlkey-labs@316934009/portfolio@1334097551:ref:refs/heads/master",
   "audiences": ["api://AzureADTokenExchange"]
 }'
 
@@ -59,7 +62,7 @@ az ad app federated-credential create --id "$APP_ID" --parameters '{
 az ad app federated-credential create --id "$APP_ID" --parameters '{
   "name": "pull-requests",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:samlkey-labs/portfolio:pull_request",
+  "subject": "repo:samlkey-labs@316934009/portfolio@1334097551:pull_request",
   "audiences": ["api://AzureADTokenExchange"]
 }'
 
