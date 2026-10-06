@@ -74,6 +74,10 @@ jobs:
           outputs=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.outputs -o json)
           rg=$(echo "$outputs" | jq -r .resourceGroupName.value)
           name=$(echo "$outputs" | jq -r .staticWebAppName.value)
+          if [ -z "$rg" ] || [ "$rg" = "null" ] || [ -z "$name" ] || [ "$name" = "null" ]; then
+            echo "::error::Deployment '$DEPLOYMENT_NAME' has no outputs. The last infra deployment is still running or failed; check it with: az deployment sub show --name $DEPLOYMENT_NAME"
+            exit 1
+          fi
           token=$(az staticwebapp secrets list --name "$name" --resource-group "$rg" --query properties.apiKey -o tsv)
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
@@ -105,6 +109,10 @@ jobs:
           outputs=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.outputs -o json)
           rg=$(echo "$outputs" | jq -r .resourceGroupName.value)
           name=$(echo "$outputs" | jq -r .staticWebAppName.value)
+          if [ -z "$rg" ] || [ "$rg" = "null" ] || [ -z "$name" ] || [ "$name" = "null" ]; then
+            echo "::error::Deployment '$DEPLOYMENT_NAME' has no outputs. The last infra deployment is still running or failed; check it with: az deployment sub show --name $DEPLOYMENT_NAME"
+            exit 1
+          fi
           token=$(az staticwebapp secrets list --name "$name" --resource-group "$rg" --query properties.apiKey -o tsv)
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
