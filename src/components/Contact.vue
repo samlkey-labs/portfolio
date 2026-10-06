@@ -53,7 +53,13 @@
 
             <!-- Right: form panel -->
             <div class="contact-form-panel" :class="{ 'is-visible': revealed }" style="transition-delay: 0.14s">
-                <form class="contact-form" action="https://formspree.io/f/mrbkglll" method="POST">
+                <form class="contact-form" @submit.prevent="submit">
+                    <!-- Honeypot: hidden from people, filled in by bots -->
+                    <div class="form-honeypot" aria-hidden="true">
+                        <label for="contact-website">Website</label>
+                        <input type="text" id="contact-website" v-model="form.website" tabindex="-1" autocomplete="off">
+                    </div>
+
                     <div class="form-row">
                         <div class="form-field">
                             <label for="contact-email">Email address</label>
@@ -61,6 +67,7 @@
                                 type="email"
                                 id="contact-email"
                                 name="from"
+                                v-model="form.from"
                                 placeholder="you@example.com"
                                 autocomplete="email"
                                 required
@@ -72,6 +79,7 @@
                                 type="text"
                                 id="contact-subject"
                                 name="subject"
+                                v-model="form.subject"
                                 placeholder="What's this about?"
                                 maxlength="60"
                                 required
@@ -87,20 +95,24 @@
                         <textarea
                             id="contact-message"
                             name="message"
+                            v-model="form.message"
                             rows="5"
                             maxlength="500"
                             placeholder="Tell me about your project or opportunity…"
-                            @input="handleInput"
                             required
                         ></textarea>
                     </div>
 
-                    <button type="submit" class="contact-submit" aria-label="Send message">
-                        Send Message
+                    <button type="submit" class="contact-submit" aria-label="Send message" :disabled="status === 'sending'">
+                        {{ status === 'sending' ? 'Sending…' : 'Send Message' }}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z"/>
                         </svg>
                     </button>
+
+                    <p v-if="statusMessage" class="form-status" :class="`form-status--${status}`" role="status">
+                        {{ statusMessage }}
+                    </p>
                 </form>
             </div>
 
@@ -113,9 +125,16 @@ export default {
     name: 'Contact',
     data() {
         return {
-            charsLeft: 500,
             revealed: false,
+            form: { from: '', subject: '', message: '', website: '' },
+            status: 'idle', // idle | sending | success | error
+            statusMessage: '',
         };
+    },
+    computed: {
+        charsLeft() {
+            return 500 - this.form.message.length;
+        },
     },
     mounted() {
         const observer = new IntersectionObserver(
@@ -130,8 +149,25 @@ export default {
         observer.observe(this.$refs.wrapper);
     },
     methods: {
-        handleInput(e) {
-            this.charsLeft = e.target.maxLength - e.target.value.length;
+        async submit() {
+            this.status = 'sending';
+            this.statusMessage = '';
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.form),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || 'Message could not be sent. Please try again later.');
+
+                this.status = 'success';
+                this.statusMessage = "Thanks! Your message has been sent. I'll get back to you soon.";
+                this.form = { from: '', subject: '', message: '', website: '' };
+            } catch (err) {
+                this.status = 'error';
+                this.statusMessage = err.message;
+            }
         },
     },
 };

@@ -71,9 +71,13 @@ jobs:
       - name: Get deployment token
         id: swa
         run: |
-          outputs=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.outputs -o json)
-          rg=$(echo "$outputs" | jq -r .resourceGroupName.value)
-          name=$(echo "$outputs" | jq -r .staticWebAppName.value)
+          # Names come from the param file so this works even before the first infra deploy has outputs
+          rg=$(grep '^param resourceGroupName ' infra/main.bicepparam | cut -d"'" -f2)
+          name=$(grep '^param staticWebAppName ' infra/main.bicepparam | cut -d"'" -f2)
+          if [ -z "$rg" ] || [ -z "$name" ]; then
+            echo "::error::Could not read resourceGroupName/staticWebAppName from infra/main.bicepparam"
+            exit 1
+          fi
           token=$(az staticwebapp secrets list --name "$name" --resource-group "$rg" --query properties.apiKey -o tsv)
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
@@ -85,7 +89,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: /
-          api_location: ""
+          api_location: api
           output_location: dist
 
   close_pull_request:
@@ -93,6 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Close Pull Request
     steps:
+      - uses: actions/checkout@v4
+
       - uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -102,9 +108,13 @@ jobs:
       - name: Get deployment token
         id: swa
         run: |
-          outputs=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.outputs -o json)
-          rg=$(echo "$outputs" | jq -r .resourceGroupName.value)
-          name=$(echo "$outputs" | jq -r .staticWebAppName.value)
+          # Names come from the param file so this works even before the first infra deploy has outputs
+          rg=$(grep '^param resourceGroupName ' infra/main.bicepparam | cut -d"'" -f2)
+          name=$(grep '^param staticWebAppName ' infra/main.bicepparam | cut -d"'" -f2)
+          if [ -z "$rg" ] || [ -z "$name" ]; then
+            echo "::error::Could not read resourceGroupName/staticWebAppName from infra/main.bicepparam"
+            exit 1
+          fi
           token=$(az staticwebapp secrets list --name "$name" --resource-group "$rg" --query properties.apiKey -o tsv)
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
