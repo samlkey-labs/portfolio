@@ -6,4 +6,4 @@ param appName = 'portfolio'
 param env = 'prod'
 param swaLocation = 'eastus2'
 param sku = 'Free'
-param customDomain = '' //www.samkey.uk
+param customDomain = 'www.samkey.uk'

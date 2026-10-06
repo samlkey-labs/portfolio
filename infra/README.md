@@ -8,7 +8,7 @@ Bicep templates for hosting the portfolio on Azure Static Web Apps.
 | `modules/staticWebApp.bicep` | The Static Web App and optional custom domain. |
 | `main.bicepparam` | Parameter values, including the resource group name. |
 
-The resource group (`slk-portfolio-rg-weu`) already exists and isn't managed by these templates. The Static Web App is deployed to **East US 2** (West Europe isn't accepting new Static Web Apps for this subscription); its content is served from Azure's global edge network.
+The resource group (`slk-portfolio-rg-eus2`) already exists and isn't managed by these templates. The Static Web App is deployed to **East US 2** (West Europe isn't accepting new Static Web Apps for this subscription); its content is served from Azure's global edge network.
 
 Deployment runs from `.github/workflows/slk-portfolio-swa-eus2.yml`: `what-if` on pull requests, `create` on push to `master`.
 
@@ -30,7 +30,7 @@ az ad sp create --id "$APP_ID"
 az role assignment create \
   --assignee "$APP_ID" \
   --role Contributor \
-  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/slk-portfolio-rg-weu"
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/slk-portfolio-rg-eus2"
 
 # Subscription-scoped deployments also need permission to write deployments at subscription level
 az role definition create --role-definition '{
