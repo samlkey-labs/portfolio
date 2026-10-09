@@ -4,6 +4,6 @@
     "exclude": ["/images/*", "/css/*", "/js/*", "/favicon.ico"]
   },
   "platform": {
-    "apiRuntime": "node:20"
+    "apiRuntime": "node:22"
   }
 }

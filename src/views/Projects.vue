@@ -161,7 +161,7 @@ export default {
           mobileImage: require("@/assets/img-mobile/WordleCap.png"),
           tags: ["React", "JavaScript"],
           liveHref: "https://samlkey.github.io/Wordle-Clone/",
-          githubHref: "https://github.com/samlkey/Wordle-Clone",
+          githubHref: "https://github.com/samlkey-labs/wordle-clone",
           displayUrl: "samlkey.github.io/Wordle-Clone",
         },
         {
@@ -172,7 +172,7 @@ export default {
           mobileImage: require("@/assets/img-mobile/mobhighlow_mobile.png"),
           tags: ["React", "Express.js", "JavaScript"],
           liveHref: "https://samlkey-labs.github.io/mob-high-low/",
-          githubHref: "https://github.com/samlkey/MobHighLow",
+          githubHref: "https://github.com/samlkey-labs/mob-high-low",
           displayUrl: "samlkey.github.io/MobHighLow",
         },
         {
@@ -183,7 +183,7 @@ export default {
           mobileImage: require("@/assets/img-mobile/vinyl_mobile.png"),
           tags: ["Blazor", ".NET", "Entity Framework", "C#"],
           liveHref: "https://vinyl-collection.co.uk/",
-          githubHref: "https://github.com/samlkey/VinylCollection",
+          githubHref: "https://github.com/samlkey-labs/vinyl-collection",
           displayUrl: "vinyl-collection.co.uk",
         },
       ],
