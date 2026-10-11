@@ -178,7 +178,7 @@ export default {
         {
           title: "Vinyl Collection",
           description:
-            "A full-stack web app for cataloguing and managing vinyl record collections, built with React.",
+            "A full-stack web app for cataloguing and managing vinyl record collections, built with Blazor and .NET.",
           image: require("@/assets/img-desktop/vinylscreenshot.png"),
           mobileImage: require("@/assets/img-mobile/vinyl_mobile.png"),
           tags: ["Blazor", ".NET", "Entity Framework", "C#"],
