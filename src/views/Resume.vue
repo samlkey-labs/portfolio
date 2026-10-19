@@ -265,7 +265,7 @@
               <div class="card-header-left">
                 <span class="card-year">2021 – 2022</span>
                 <h3 class="card-org">Sheffield Hallam University</h3>
-                <span class="card-role">MSc Cyber Security</span>
+                <span class="card-role">PgDip Cyber Security</span>
               </div>
             </div>
             <p class="card-desc">
